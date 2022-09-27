@@ -4,15 +4,16 @@
         <img class="logo" src="..//assets/logo1.png" />
         <h1>Login</h1>
         <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label"><b>Email Address</b> </label>
-            <input type="email" v-model="email" placeholder="Enter Your Email Address" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" />
+            <label for="exampleInputEmail1" class="form-label"><b>Email Address</b>
+            </label>
+            <input type="email" placeholder="Enter Your Email Address" class="form-control" v-model="email"/>
         </div>
         <div class="mb-3">
             <label for="exampleInputPassword1" class="form-label"><b> Password</b></label>
-            <input type="password" v-model="password" placeholder="Enter Password" class="form-control" id="exampleInputPassword1" />
+            <input type="password" placeholder="Enter Password" class="form-control" v-model="password"/>
         </div>
         <div>
-            <button type="button" class="btn btn-success" v-on:click="login">
+            <button @click="submitForm" type="button" class="btn btn-success" v-on:click="login">
                 Login
             </button>
         </div>
@@ -31,45 +32,56 @@
 </template>
 
 <script>
-import axios from "axios";
+import useValidate from "@vuelidate/core"
+import {
+    required
+} from "@vuelidate/validators"
+import axios from "axios"
 export default {
     name: "Login",
     data() {
         return {
+            v$: useValidate(),
             email: "",
-            password: "",
-        };
-    },
-    methods: {
-        async login() {
-            const result = await axios.post(
-                    "https://to-do-list-4512824.herokuapp.com/api/login", {
-                        email: this.email,
-                        password: this.password,
-                    }
-                )
-                // .then((response) => {
-                //     localStorage.setItem('jwttoken', response.data.token);
-                //     // setAuthHeader(response.data.token)
-                // })
-            console.log(result);
-            if (result.status == 200) {
-                localStorage.setItem("user-info", JSON.stringify(result.data));
-                this.$router.push({
-                    name: "Home",
-                });
-            }
-        },
-
-    },
-    mounted() {
-        let user = localStorage.getItem("user-info");
-        if (user) {
-            this.$router.push({
-                name: "Home",
-            });
+            password: ""
         }
     },
+    methods: {
+        submitForm() {
+            this.v$.$validate();
+            if (this.v$.$error) {
+                alert("Data is required");
+            }
+        },
+        async login() {
+            const result = await axios
+                .post("https://to-do-list-4512824.herokuapp.com/api/login", {
+                    email: this.email,
+                    password: this.password
+                })
+                .then((result) => {
+                    console.log(result)
+                    if (result.data.code == 200) {
+                        console.log("inside")
+                        localStorage.setItem("token", result.data.token);
+                        localStorage.setItem("userId", result.data.userId);
+                        this.$router.push({
+                            name: "Home",
+                        })
+                    }
+                })
+        }
+    },
+    validations() {
+        return {
+            email: {
+                required,
+            },
+            password: {
+                required
+            }
+        }
+    }
 };
 </script>
 
