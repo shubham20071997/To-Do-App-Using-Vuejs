@@ -1,8 +1,14 @@
 <template>
+<header>
+<div class="nav">
+    <router-link to='/Landing'>Start</router-link>
+    <router-link to='/login'>Login</router-link>
+    <router-link to='/sign-up'>Signup</router-link>
+    </div>
+</header>
 <div class="container">
     <form>
         <img class="logo" src="..//assets/logo1.png" />
-        <h1>Login</h1>
         <div class="mb-3">
             <label for="exampleInputEmail1" class="form-label"><b>Email Address</b>
             </label>
@@ -15,16 +21,6 @@
         <div>
             <button @click="submitForm" type="button" class="btn btn-success" v-on:click="login">
                 Login
-            </button>
-        </div>
-        <div>
-            <button type="button" class="btn btn-success">
-                <router-link to="/sign-up">SignUp</router-link>
-            </button>
-        </div>
-        <div>
-            <button type="button" class="btn btn-success">
-                <router-link to="/landing">Back to the Page</router-link>
             </button>
         </div>
     </form>
@@ -50,7 +46,7 @@ export default {
         submitForm() {
             this.v$.$validate();
             if (this.v$.$error) {
-                alert("Data is required");
+                alert("your password is incorrect");
             }
         },
         async login() {
@@ -62,12 +58,12 @@ export default {
                 .then((result) => {
                     console.log(result)
                     if (result.data.code == 200) {
-                        console.log("inside")
                         localStorage.setItem("token", result.data.token);
                         localStorage.setItem("userId", result.data.userId);
                         this.$router.push({
                             name: "Home",
                         })
+                        alert("login successfully")
                     }
                 })
         }
@@ -87,9 +83,9 @@ export default {
 
 <style scoped>
 .logo {
-    margin-top: 40px;
-    margin-bottom: 20px;
-    width: 200px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    width: 130px;
 }
 
 h1 {
@@ -118,5 +114,28 @@ button.btn.btn-success {
     text-decoration: none;
     color: black;
     font-weight: bold;
+}
+.nav{
+    background-color: #333;
+    overflow: hidden;
+}
+.nav a {
+float:right;
+color: #f2f2f2;
+text-align: center;
+padding: 19px 50px;
+text-decoration: none;
+font-size: 20px;
+margin: 4px;
+margin-left: 20px;
+}
+.nav a:hover{
+    background-color: rgb(161, 41, 41);
+}
+
+@media (min-width: 1200px) {
+  .container {
+    width: 500px;
+  }
 }
 </style>

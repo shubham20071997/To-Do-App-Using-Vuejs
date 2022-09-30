@@ -1,82 +1,107 @@
 <template>
-<Header />
-<h1>List page</h1>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th scope="col">Sr. No.</th>
-            <th scope="col">Title</th>
-            <th scope="col">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>
-                <router-link to='/update'>Update ||</router-link>
-                <button v-on:click="deleteTask(item.id)">Delete</button>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-        </tr>
-    </tbody>
-</table>
+<header class="nav">
+    <nav navbar-fixed-top>
+        <router-link to="/">Home</router-link>
+        <router-link to="/create-task">Add Task</router-link>
+        <a v-on:click="logout" href="#">Logout</a>
+    </nav>
+</header>
+<h1><b> List page</b></h1>
+<div class="container">
+<!-- <form class="form-inline form-row serach-form">
+        <div>
+            <label for="category"><b>SELECT CATEGORY</b></label>
+            <select id="category" name="category" v-model="category">
+                <option value="0">TO-DO</option>
+                <option value=1>IN-PROGRESS</option>
+                <option value=2>COMPLETED</option>
+            </select>
+        </div>
+        <div id="date-picker-example" class="md-form md-outline input-with-post-icon datepicker" inline="true">
+            <label for="date"><b>DATE</b></label>
+            <input v-model="date" type="date">
+        </div>
+    </form> -->
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Task Id</th>
+                <th scope="col">Title</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="item in list" :key="item.id">
+                <td>{{item.id}}</td>
+                <td>{{item.title}}</td>
+                <td>
+                    <button v-if="item.status==0">
+                    <router-link :to="{ name: 'Update', params: { taskId: item.id }}">Edit</router-link>
+                        <!-- <router-link :to="'/update/'+item.id">Edit</router-link> -->
+                    </button>
+                    <button v-if="item.status==0"  v-on:click="updateStatus(1,item.id)">Complete</button>
+                    <button v-else-if="item.status==1">Completed</button>
+                    <button v-if="item.status==0" v-on:click="updateStatus(2,item.id)">Delete</button>
+                    <button v-else-if="item.status==2">Deleted</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 </template>
 
 <script>
 import axios from 'axios';
-import Header from './Header.vue';
 export default {
     name: "List",
     data() {
         return {
-            name: ''
+            name: '',
+            list: []
         }
     },
-    components: {
-        Header
-    },
-    
-    methods: {
-        async mounted() {
+    async mounted() {
+        let token = localStorage.getItem('token')
         let user = localStorage.getItem('userId');
-        if (!user) {
-            this.$router.push({
-                name: 'SignUp'
-            })
-        }
-        axios.defaults.headers = {
-                Authorization: 'Bearer ' + localStorage.getItem('token'),
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            };
-        let result = await axios.get("https://to-do-list-4512824.herokuapp.com/api/category-list");
+        this.name = JSON.parse(user).name;
+        let result = await axios.get("https://to-do-list-4512824.herokuapp.com/api/tasks/" + user, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
         console.warn(result)
+        this.list = result.data;
     },
-        // async deleteTask(id) {
-        //     let result = await axios.delete('https://to-do-list-4512824.herokuapp.com/api/category-list/' + id);
-        //     if (result.status == 200) {
-        //         this.loadData()
-        //     }
-        // },
-        // async loadData() {
-        //     let user = localStorage.getItem('user-info');
-        //     // if (!user) {
-        //     //     this.$router.push({
-        //     //         name: 'SignUp'
-        //     //     })
-        //     // }
-        //     // let result = await axios.get('https://to-do-list-4512824.herokuapp.com/api/category-list');
-        //     // console.warn(result);
-        // }
-    },
-    // async mounted() {
-    //     this.loadData()
-    // }
+    methods: {
+        logout() {
+            localStorage.clear();
+            this.$router.push({
+                name: 'Login'
+            })
+        },
+        async updateStatus(status,taskId){
+             await axios.patch("https://to-do-list-4512824.herokuapp.com/api/update-status", {
+                status:status,
+                id:taskId
+            }, 
+            {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem('token')}`
+                }
+            }).then(response => {
+				if(response.data.code == 400){
+				alert('Oops ! There was something wrong.. Please try Again')
+				}else{
+				alert('Task status has been updated successfully.')
+                 this.$router.push({
+                            name: "Home",
+                        })
+				}
+			});
+
+        }
+
+    }
 };
 </script>
 
@@ -85,15 +110,36 @@ body {
     background-color: white;
 }
 
-.table-bordered {
-    border: 4px solid #ab5189;
-}
-
 table tr th {
     background-color: white;
 }
 
 table tr td {
     background-color: white;
+}
+
+.nav {
+    background-color: #333;
+    position: fixed;
+    width: 2000px;
+    margin-bottom: 100px;
+    overflow: visible;
+}
+
+.nav a {
+    float: left;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 19px 25px;
+    text-decoration: none;
+    font-size: 20px;
+    margin: 4px;
+}
+
+.nav a:hover {
+    background-color: rgb(161, 41, 41);
+}
+table{
+    margin-top: 30px;
 }
 </style>

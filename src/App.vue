@@ -1,7 +1,6 @@
 <template>
   <router-view/>
 </template>
-
 <script>
 export default {
   name: 'App',
@@ -15,14 +14,14 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  background-color: aqua;
+  background-color:#e9ecef;
 }
 
 html{
-  background-color: aqua;
+  background-color: #e9ecef;
 }
 .container{
-  background-color: aqua;
+  background-color: #e9ecef;
 }
 
 </style>

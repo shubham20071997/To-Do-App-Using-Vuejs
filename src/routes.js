@@ -42,7 +42,7 @@ const routes= [
     {
         name:'Update',
         component:Update,
-        path:'/update'
+        path:'/update/:taskId'
     },
     {
         name:'Dashboard',
