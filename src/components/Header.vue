@@ -1,12 +1,16 @@
 <template>
-<header>
-    <div class="nav">
+<div class=" nav d-flex">
+    <div class="p-2">
         <router-link to="/">Home</router-link>
-        <router-link to="/create-task">Add Task</router-link>
-        <router-link to="/task-lists">Task Lists</router-link>
-        <a v-on:click="logout" href="#">Logout</a>
     </div>
-</header>
+    <div class="p-2">
+        <router-link to="/task-lists">Task Lists</router-link>
+    </div>
+    <div class="p-2">
+        <router-link to="/create-task">Add Task</router-link>
+    </div>
+    <div class="ml-auto p-2"> <a v-on:click="logout" href="#">Logout</a></div>
+</div>
 </template>
 
 <script>
@@ -31,7 +35,7 @@ export default {
 }
 
 .nav a {
-    float: left;
+    float: right;
     color: #f2f2f2;
     text-align: center;
     padding: 19px 25px;

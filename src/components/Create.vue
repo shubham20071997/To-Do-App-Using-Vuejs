@@ -6,7 +6,7 @@
         <div class="row mb-3">
             <label for="task" class="col-sm-2 col-form-label">Title</label>
             <div class="col-sm-10">
-                <input id="title" type="text" placeholder="Title of Task" class="form-control" v-model="title">
+                <input id="title" type="text" placeholder="Title of Task" class="form-control" v-model="title" required>
             </div>
         </div>
         <div class="mb-3 row">
@@ -18,7 +18,7 @@
         <div class="mb-3 row">
             <label for="date" class="col-sm-2 col-form-label">Date</label>
             <div class="md-form md-outline input-with-post-icon datepicker">
-                <input id="date" placeholder="Select date" v-model="date" type="date" class="form-control">
+                <input id="date" min="2022-10-03" placeholder="Select date" v-model="date" type="date" class="form-control">
             </div>
         </div>
         <!-- <div class="mb-3 row">
@@ -40,8 +40,9 @@
             </select>
         </div>
         <div>
-            <button class="btn btn-success" type="button" v-on:click="addTask">ADD TASK</button>
+            <button v-on:click="addTask" type="button" class="btn btn-success">ADD TASK</button>
         </div>
+        <div class="alert alert-success" role="alert" id="msg"></div>
     </form>
 </div>
 </template>
@@ -56,16 +57,27 @@ export default {
     },
     data() {
         return {
+
             title: '',
             remark: '',
             date: '',
             category: '',
-            userId: localStorage.getItem('userId')
+            userId: localStorage.getItem('userId'),
+            date: {
+                disabledDates: {
+                    to: new Date(Date.now() - 8640000)
+                }
+
+            }
         }
     },
+
     async mounted() {
-        await axios.get("https://to-do-list-4512824.herokuapp.com/api/category-list",
-            { headers: { "Authorization": `Bearer ${localStorage.getItem('token')}` } })
+        await axios.get("https://to-do-list-4512824.herokuapp.com/api/category-list", {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem('token')}`
+                }
+            })
             .then(response => {
                 let str = '';
                 for (let i = 0; i < response.data.length; i++) {
@@ -85,17 +97,16 @@ export default {
                 remark: this.remark,
                 date: this.date,
                 category: this.category,
-                status:0,
+                status: 0,
                 userId: this.userId
-            }, 
-            {
+            }, {
                 headers: {
                     "Authorization": `Bearer ${token}`
                 }
             });
             console.log(result);
-            if(result.data.code==201){
-                alert("task created successfully")
+            if (result.data.code == 201) {
+                document.getElementById('msg').innerHTML = 'Task has been created successfully.';
                 document.getElementById('title').value = ''
                 document.getElementById('remark').value = ''
                 document.getElementById('date').value = ''
@@ -107,11 +118,12 @@ export default {
 </script>
 
 <style scoped>
-
-input, select {
-    margin-bottom: 20px;  
+input,
+select {
+    margin-bottom: 20px;
 }
-.btn{
+
+.btn {
     margin-top: 40px;
 }
 
@@ -127,9 +139,30 @@ input[type="date"].form-control,
 select {
     margin-left: 14px;
 }
+
+md-form md-outline input-with-post-icon datepicker {
+    height: 62px;
+}
+
+#category {
+    height: 33px;
+    width: 169px;
+}
+.alert{
+    background-color: #e9ecef;
+    border: none;
+}
+
+@media (min-width: 200px) {
+    .col-sm-10 {
+        flex: 0 0 83.333333%;
+        max-width: 79.333333%;
+    }
+}
+
 @media (min-width: 1200px) {
-  .container {
-    width: 800px;
-  }
+    .container {
+        width: 800px;
+    }
 }
 </style>

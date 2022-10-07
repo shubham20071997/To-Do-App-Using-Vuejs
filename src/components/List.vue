@@ -1,12 +1,13 @@
 <template>
-<header class="nav">
+<Header/>
+<!-- <header class="nav">
     <nav navbar-fixed-top>
         <router-link to="/">Home</router-link>
         <router-link to="/create-task">Add Task</router-link>
         <a v-on:click="logout" href="#">Logout</a>
     </nav>
-</header>
-<h1><b> List page</b></h1>
+</header>-->
+<!-- <h1><b> List page</b></h1>  -->
 <div class="container">
 <!-- <form class="form-inline form-row serach-form">
         <div>
@@ -40,9 +41,9 @@
                         <!-- <router-link :to="'/update/'+item.id">Edit</router-link> -->
                     </button>
                     <button v-if="item.status==0"  v-on:click="updateStatus(1,item.id)">Complete</button>
-                    <button v-else-if="item.status==1">Completed</button>
+                    <button class="cpl" v-else-if="item.status==1">Completed</button>
                     <button v-if="item.status==0" v-on:click="updateStatus(2,item.id)">Delete</button>
-                    <button v-else-if="item.status==2">Deleted</button>
+                    <button class="del" v-else-if="item.status==2">Deleted</button>
                 </td>
             </tr>
         </tbody>
@@ -51,9 +52,13 @@
 </template>
 
 <script>
+import Header from './Header.vue'
 import axios from 'axios';
 export default {
     name: "List",
+    components: {
+        Header
+    },
     data() {
         return {
             name: '',
@@ -120,9 +125,6 @@ table tr td {
 
 .nav {
     background-color: #333;
-    position: fixed;
-    width: 2000px;
-    margin-bottom: 100px;
     overflow: visible;
 }
 
@@ -139,7 +141,12 @@ table tr td {
 .nav a:hover {
     background-color: rgb(161, 41, 41);
 }
-table{
-    margin-top: 30px;
+.del{
+    color: red;
+    background-color: #f6f3ef;
+}
+.cpl{
+    color: green;
+    background-color: #f6f3ef;
 }
 </style>

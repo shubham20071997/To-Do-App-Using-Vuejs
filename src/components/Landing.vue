@@ -1,8 +1,8 @@
 <template>
 <header>
-<div class="nav">
-    <router-link to='/login'>Login</router-link>
+<div class="nav flex-row-reverse">
     <router-link to='/sign-up'>Signup</router-link>
+    <router-link to='/login'>Login</router-link>
     </div>
 </header>
 <div class="container">
@@ -67,11 +67,10 @@ padding: 19px 50px;
 text-decoration: none;
 font-size: 20px;
 margin: 4px;
-margin-left: 20px;
+margin-right: 50px;
 }
 .nav a:hover{
     background-color: rgb(161, 41, 41);
 }
-
 
 </style>

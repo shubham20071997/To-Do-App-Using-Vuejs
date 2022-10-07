@@ -1,9 +1,9 @@
 <template>
 <header>
-    <div class="nav">
+    <div class="nav flex-row-reverse">
         <router-link to='/Landing'>Start</router-link>
-        <router-link to='/login'>Login</router-link>
         <router-link to='/sign-up'>Signup</router-link>
+        <router-link to='/login'>Login</router-link>
     </div>
 </header>
 <div class="container">
@@ -12,15 +12,13 @@
         <div class="row mb-3">
             <label class="col-sm-2 col-form-label">Name</label>
             <div class="col-sm-10">
-                <input type="text" placeholder="Enter Your Name" class="form-control" :class="{invalid:nameValidity==='invalid'}" v-model.trim="name" @blur="validateInput">
-                <p v-if="nameValidity==='invalid'">Please enter a valid Name</p>
+                <input type="text" placeholder="Enter Your Name" class="form-control" v-model.trim="name" required>
             </div>
         </div>
         <div class="row mb-3">
             <label class="col-sm-2 col-form-label">Email</label>
             <div class="col-sm-10">
-                <input type="email" placeholder="Enter Your Email Address" class="form-control" :class="{invalid:emailValidity==='invalid'}" v-model.trim="email" @blur="validateInput">
-                <p v-if="emailValidity==='invalid'">Email is required</p>
+                <input type="email" placeholder="Enter Your Email Address" class="form-control" v-model.trim="email" required>
             </div>
         </div>
         <fieldset class="form-group">
@@ -45,18 +43,18 @@
         <div class="mb-3 row">
             <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
             <div class="col-sm-10">
-                <input type="password" id="password" placeholder="Enter Password" class="form-control" :class="{invalid:passwordValidity==='invalid'}" v-model.trim="password" @blur="validateInput" />
-                <p v-if="passwordValidity==='invalid'">Please enter a valid password</p>
+                <input type="password" id="password" placeholder="Enter Password" class="form-control" v-model.trim="password" required />
             </div>
         </div>
         <div class="mb-3 row">
             <label for="inputPassword2" class="col-sm-2 col-form-label">Confirm Password</label>
             <div class="col-sm-10">
-                <input type="password" id="confirmpassword" placeholder="Enter Confirm Password" class="form-control" v-model.trim="confirmpassword" />
+                <input type="password" id="confirmpassword" placeholder="Enter Confirm Password" class="form-control" v-model.trim="confirmpassword" required />
             </div>
         </div>
         <div>
-            <button class="btn btn-primary" type="button" v-on:click="SignUp()">Sign Up</button>
+            <button class="btn btn-success" type="button" v-on:click="SignUp">Sign Up</button>
+            <div class="alert alert-primary" role="alert" id="msg"></div>
         </div>
 
     </form>
@@ -74,51 +72,27 @@ export default {
             gender: "",
             password: "",
             confirmpassword: "",
-            nameValidity: 'pending',
-            emailValidity: 'pending',
-            passwordValidity: 'pending',
-
         }
     },
     methods: {
         async SignUp() {
-                if (this.password != this.confirmpassword) {
-                    alert("passwords don't match")
-                }
             let result = await axios.post(
-                "https://to-do-list-4512824.herokuapp.com/api/signup", {
-                    name: this.name,
-                    email: this.email,
-                    gender: this.gender,
-                    password: this.password,
-                    confirmpassword: this.confirmpassword
+                    "https://to-do-list-4512824.herokuapp.com/api/signup", {
+                        name: this.name,
+                        email: this.email,
+                        gender: this.gender,
+                        password: this.password,
+                        confirmpassword: this.confirmpassword
+                    })
+                .then((result) => {
+                    if (result.status == 201) {
+                        this.$router.push({
+                            name: "Login"
+                        })
+                    }
                 })
-            console.log(result)
-            if (result.status == 201) {
-                this.$router.push({
-                    name: "Login"
-                })
-                alert("signup is successful")
-            }
-        },
-        validateInput() {
-            if (this.name === '') {
-                this.nameValidity = 'invalid';
-            } else {
-                this.nameValidity = 'valid';
-            }
-            if (this.email === '') {
-                this.emailValidity = 'invalid';
-            } else {
-                this.emailValidity = 'valid';
-            }
-            if (this.password === '') {
-                this.passwordValidity = 'invalid';
-            } else {
-                this.passwordValidity = 'valid';
-            }
-
-        },
+                .catch(error => document.getElementById('msg').innerHTML = 'Sorry, you have entered wrong credentials.');
+        }
     }
 };
 </script>
@@ -193,6 +167,10 @@ button.btn.btn-success {
 
 p {
     color: red;
+}
+.alert{
+    background-color: #e9ecef;
+    border: none;
 }
 
 @media (min-width: 1200px) {

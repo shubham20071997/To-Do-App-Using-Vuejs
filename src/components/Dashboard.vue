@@ -60,31 +60,30 @@ export default {
     name: "Dashboard",
     data() {
         return {
-            data:'',
-            data1:'',
-            data2:''
+            data: '',
+            data1: '',
+            data2: ''
         }
     },
     components: {
-        
+
     },
-    
-    async mounted(){
+
+    async mounted() {
         let token = localStorage.getItem('token')
         let user = localStorage.getItem('userId');
-        this.name= JSON.parse(user).name;
-        let result= await axios.post("https://to-do-list-4512824.herokuapp.com/api/dashboard", {
-            'userId':user
-        }, 
-            {
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            });
+        this.name = JSON.parse(user).name;
+        let result = await axios.post("https://to-do-list-4512824.herokuapp.com/api/dashboard", {
+            'userId': user
+        }, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
         console.warn(result);
-        this.data=result.data[0].total_task
-        this.data1=result.data[0].due_task
-        this.data2=result.data[0].completed
+        this.data = result.data[0].total_task
+        this.data1 = result.data[0].due_task
+        this.data2 = result.data[0].completed
 
     },
 };
@@ -105,18 +104,26 @@ h1 {
 .text-warning {
     color: #0062cc !important;
 }
-.row{
-    height:200px;
+
+.row {
+    height: 200px;
     align-items: center;
 }
-.data1{
-    background-color: #ea9f88;
-}
-.data2{
-    background-color: yellow;
-}
-.data3{
-    background-color: #4CAF50;
+
+.data1 {
+    background-color: #f9d9d1;
 }
 
+.data2 {
+    background-color: #f7f7c6;
+}
+
+.data3 {
+    background-color: #d2f9d4;
+}
+
+.font-weight-bold[data-v-aae30ed8] {
+    font-weight: 700 !important;
+    font-size: x-large;
+}
 </style>
